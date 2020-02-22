@@ -149,7 +149,7 @@ def funcionesComprasAdmin():
 
     if request.method == 'DELETE':
         comp = Compra()
-        comp.set_codigo(request.args['codigo'])
+        comp.set_carrito(request.args['carrito'])
         bajacompra(comp)
         return "ok"
 
@@ -170,7 +170,12 @@ def funcionesComprasAdmin():
         print(items)
         preference = {
             "items": items,
-            "back_urls": {'pending': 'https://flask-ecommerce-mate.herokuapp.com/finalizarcompra?carrito='+request.args['carrito'], 'success': 'https://flask-ecommerce-mate.herokuapp.com/finalizarcompra?carrito='+request.args['carrito'], 'failure': 'https://flask-ecommerce-mate.herokuapp.com/cancelarcompra?carrito='+request.args['carrito']},
+            "back_urls": {
+                "success": "localhost:3000/compras",
+                "failure": "",
+                "pending": "",
+            },
+            "back_urls": {'pending': 'http://localhost:5000/finalizarcompra?carrito='+request.args['carrito'], 'success': 'http://localhost:5000/finalizarcompra?carrito='+request.args['carrito'], 'failure': 'http://localhost:5000/cancelarcompra?carrito='+request.args['carrito']},
             "auto_return": 'approved'
         }
         mp = mercadopago.MP("TEST-2010310189255433-020423-ab4183ae168fc66489c83ac9a88b909a-522644875")
@@ -343,7 +348,7 @@ def funcionesFinalizarCompra():
                 descontarStock(combo['cantidadproducto'],prodCombo['codigo'])
         modificarcompra(comp)
         cambiarEstadoCarrito(id)
-        return redirect("https://ecommerce-mate.herokuapp.com/", code=302)
+        return redirect("http://localhost:3000/", code=302)
 
 @app.route ('/cancelarcompra',methods=['GET'])
 def funcionesCancelarCompra():
@@ -352,7 +357,7 @@ def funcionesCancelarCompra():
         comp = Compra()
         comp.set_carrito(id)
         bajacompra(comp)
-        return redirect("https://ecommerce-mate.herokuapp.com/", code=302)
+        return redirect("http://localhost:3000/", code=302)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
